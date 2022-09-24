@@ -12,4 +12,6 @@ Trabajo práctico integrador 1 - Arquitectura Web - TUDAI
 
 _Dependencias_
 
+Este proyecto usa proyecto lombok
+
 * [Maven](https://maven.apache.org/) - Manejador de dependencias
