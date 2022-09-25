@@ -2,6 +2,20 @@
 
 Trabajo práctico integrador 1 - Arquitectura Web - TUDAI
 
+## Ejercicio Integrador 📋
+
+__A partir de un diagrama de base de datos se resuelve lo siguiente:__
+
+1. Se crea un programa utilizando JDBC que cree el esquema de la base de datos.
+    
+2. Considerando archivos CSV dados y se escribe un programa JDBC que genere los datos. 
+   _Se utiliza la biblioteca Apache Commons CSV, disponible en Maven central, para leer los archivos._
+   
+3. Se escribe un programa JDBC que retorna el producto que más recaudó. 
+   _Se define “recaudación” como cantidad de productos vendidos multiplicado por su valor._
+    
+4. Se escribe un programa JDBC que imprime una lista de clientes, ordenada por a cuál se l facturó más.
+   
 ## Autores ✒️
 
 * **Guillermina Lauge** - [GuillerminaL](https://github.com/GuillerminaL)
@@ -11,7 +25,7 @@ Trabajo práctico integrador 1 - Arquitectura Web - TUDAI
 ## Construido con 🛠️
 
 _Dependencias_
-
-Este proyecto usa proyecto lombok
-
 * [Maven](https://maven.apache.org/) - Manejador de dependencias
+
+_Lombok nos permite tener getters, setters, constructores, un constructor para un parámetro, otro para los parámetros obligatorios, etc._
+* [Lombok](https://projectlombok.org/)

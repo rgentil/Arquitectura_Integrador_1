@@ -7,7 +7,8 @@ import entity.Cliente;
 /**
  * 
  * Interfaz para Cliente
- *
+ * 
+ * 
  */
 public interface ClienteDAO extends DAO<Cliente>{
 

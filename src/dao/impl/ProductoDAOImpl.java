@@ -105,7 +105,13 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		ResultSet rs = null;
 		try {
 			this.getConection(db);
-			st = conection().prepareStatement("SELECT * FROM Producto ORDER BY 1");
+			String query = "SELECT p.idProdcuto, p.nombre, p.valor, SUM(p.valor * fp.cantidad) as total "
+					+ " FROM Producto p "
+					+ " LEFT JOIN Factura_Producto fp ON (p.idProducto = fp.idProducto) "
+					+ " GROUP BY idProducto "
+					+ " ORDER BY 4 DESC "
+					+ " LIMIT 1";
+			st = conection().prepareStatement(query);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				return Optional.of(Producto.builder()

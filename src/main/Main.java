@@ -4,18 +4,18 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import csv.CSVService;
-import entity.Factura;
-import entity.FacturaProducto;
-import entity.Producto;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
+import csv.CSVService;
 import dao.ClienteDAO;
 import dao.FacturaDAO;
 import dao.FacturaProductoDAO;
 import dao.ProductoDAO;
 import entity.Cliente;
+import entity.Factura;
+import entity.FacturaProducto;
+import entity.Producto;
 import factory.DAOFactory;
 import util.Constante;
 
@@ -29,7 +29,7 @@ import util.Constante;
  * </ul>
  * @version 1.0.0
  * @since 2022
- *
+ * 
  */
 
 public class Main {
@@ -38,6 +38,7 @@ public class Main {
 	 * @param args Argumentos de la app
 	 * @throws Exception Posible errores
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception{
 		CSVService csvService = new CSVService();
 		//String db = Constante.MYSQL;

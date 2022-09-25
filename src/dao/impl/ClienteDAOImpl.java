@@ -9,7 +9,12 @@ import java.util.List;
 import conection.Conection;
 import dao.ClienteDAO;
 import entity.Cliente;
-
+/**
+ * Clase que implementa metodos.
+ *
+ * @see Conection
+ * @see ClienteDAO
+ */
 public class ClienteDAOImpl extends Conection implements ClienteDAO{
 	
 	private String db;
@@ -116,7 +121,15 @@ public class ClienteDAOImpl extends Conection implements ClienteDAO{
 		ResultSet rs = null;
 		try {
 			this.getConection(db);
-			st = conection().prepareStatement("SELECT * FROM Cliente ORDER BY 1");			
+			String query = "SELECT c.idCliente, c.nombre, c.email, SUM(p.valor * fp.cantidad) as total "
+					+ " FROM Cliente c "
+					+ " LEFT JOIN Factura f ON (c.idCliente = f.idCliente) "
+					+ " LEFT JOIN Factura_Producto fp ON (f.idFactura = fp.idFactura) "
+					+ " LEFT JOIN Producto p ON (p.idProducto = fp.idProducto) "
+					+ "GROUP BY c.idCliente "
+					+ "ORDER BY 4 DESC";
+			st = conection().prepareStatement(query);			
+			;
 			lista = new ArrayList<Cliente>();			
 			rs = st.executeQuery();			
 			while (rs.next()) {
