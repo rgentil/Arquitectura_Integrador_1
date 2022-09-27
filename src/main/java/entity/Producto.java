@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * 
  * Entidad Producto
- *
  */
 @Data
 @AllArgsConstructor

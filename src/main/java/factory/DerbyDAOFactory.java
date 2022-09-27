@@ -18,25 +18,17 @@ import dao.impl.ProductoDAOImpl;
 
 /**
  * Clase que conecta con la base de datos Derby
- * 
  */
 public class DerbyDAOFactory extends DAOFactory{
 
-	/*
-	 * Los datos de la conexion a la base los saco desde un archivo properties
-	 */
-	// private static final String JDBC_DRIVER =
-	// "org.apache.derby.jdbc.EmbeddedDriver"
-	// private static final String DB_URL = "jdbc:derby:MyDerbyDb;create=true"
-
 	public DerbyDAOFactory() {
-		DerbyDAOFactory.registrarDriver();
+		DerbyDAOFactory.registerDriver();
 	}
 
 	/**
-	 * Metodo que regitra el driver de la base de datos
+	 * Registra el driver de la base de datos.
 	 */
-	private static void registrarDriver() {
+	private static void registerDriver() {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileReader("properties/dbDerby.properties"));
@@ -46,15 +38,14 @@ public class DerbyDAOFactory extends DAOFactory{
 			System.out.println(e);
 			System.exit(1);
 		}
-
 	}
 
 	/**
-	 * Crea la conexion a la base de datos.
+	 * Crea una conexión a la base de datos.
 	 * 
-	 * @return Conexion a la base,
+	 * @return Una conexión a la base de datos
 	 */
-	public static Connection createConection() throws SQLException {
+	public static Connection createConnection() {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileReader("properties/dbDerby.properties"));
@@ -85,7 +76,5 @@ public class DerbyDAOFactory extends DAOFactory{
 	@Override
 	public ProductoDAO getProductoDAO(String db) throws SQLException {
 		return new ProductoDAOImpl(db);
-	}	
-
-
+	}
 }

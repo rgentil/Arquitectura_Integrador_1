@@ -3,9 +3,7 @@ package entity;
 import lombok.*;
 
 /**
- * 
  * Entidad Factura
- *
  */
 @Data
 @AllArgsConstructor

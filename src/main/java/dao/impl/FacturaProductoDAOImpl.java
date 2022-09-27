@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import conection.Conection;
+import connection.Connection;
 import dao.FacturaProductoDAO;
 import entity.FacturaProducto;
 
-public class FacturaProductoDAOImpl extends Conection implements FacturaProductoDAO{
+public class FacturaProductoDAOImpl extends Connection implements FacturaProductoDAO{
 
 	private String db;
 	
@@ -23,21 +23,21 @@ public class FacturaProductoDAOImpl extends Conection implements FacturaProducto
 	@Override
 	public void delete() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "DELETE FROM Factura_Producto";
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		}catch (Exception e) {
 			System.out.println("No hace falta el DELETE FROM");
 		}finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}				
 	}
 	
 	@Override
 	public void create() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "CREATE TABLE Factura_Producto("
 					+ "idFactura INT,"
 					+ "idProducto INT,"
@@ -46,24 +46,24 @@ public class FacturaProductoDAOImpl extends Conection implements FacturaProducto
 					+ "FOREIGN KEY(idFactura) references Factura(idFactura),"
 					+ "FOREIGN KEY(idProducto) references Producto(idProducto))";
 			
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		}catch (Exception e) {
 			System.out.println("No hace falta el CREATE TABLE para FacturaProducto");
 		}finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}		
 	}
 
 	@Override
 	public void insertAll(List<FacturaProducto> invoiceProducts) throws SQLException{
-		this.getConection(db);
+		this.getConnection(db);
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			for(FacturaProducto invoiceProduct: invoiceProducts) {
 				String insert = "INSERT INTO Factura_Producto (idFactura, idProducto, cantidad) VALUES (?, ?, ?)";
-				st = conection().prepareStatement(insert);
+				st = connection().prepareStatement(insert);
 				st.setLong(1, invoiceProduct.getIdFactura());
 				st.setLong(2, invoiceProduct.getIdProducto());
 				st.setInt(3, invoiceProduct.getCantidad());
@@ -73,7 +73,7 @@ public class FacturaProductoDAOImpl extends Conection implements FacturaProducto
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			closeConection(st, rs);
+			closeConnection(st, rs);
 		}
 		
 	}
@@ -84,8 +84,8 @@ public class FacturaProductoDAOImpl extends Conection implements FacturaProducto
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConection(db);
-			st = conection().prepareStatement("SELECT * FROM Factura_Producto ORDER BY 1");			
+			this.getConnection(db);
+			st = connection().prepareStatement("SELECT * FROM Factura_Producto ORDER BY 1");
 			lista = new ArrayList<FacturaProducto>();			
 			rs = st.executeQuery();			
 			while (rs.next()) {
@@ -102,7 +102,7 @@ public class FacturaProductoDAOImpl extends Conection implements FacturaProducto
 		} catch (Exception e) {
 			throw e;
 		} finally {			
-			closeConection(st,rs);	
+			closeConnection(st,rs);
 		}
 	}
 

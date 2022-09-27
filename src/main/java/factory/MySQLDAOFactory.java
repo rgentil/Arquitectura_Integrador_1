@@ -18,13 +18,13 @@ import dao.impl.ProductoDAOImpl;
 public class MySQLDAOFactory extends DAOFactory{
 
 	public MySQLDAOFactory() {
-		MySQLDAOFactory.registrarDriver();
+		MySQLDAOFactory.registerDriver();
 	}
 	
 	/**
 	 * Metodo que regitra el driver de la base de datos
 	 */
-	private static void registrarDriver() {
+	private static void registerDriver() {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileReader("properties/dbMySQL.properties"));
@@ -37,11 +37,11 @@ public class MySQLDAOFactory extends DAOFactory{
 	}
 	
 	/**
-	 * Crea la conexion a la base de datos.
+	 * Crea una conexión a la base de datos.
 	 * 
-	 * @return Conexion a la base,
+	 * @return Una conexión a la base de datos.
 	 */
-	public static Connection createConection() throws SQLException {
+	public static Connection createConnection() {
 		try {
 			Properties prop = new Properties();
 			prop.load(new FileReader("properties/dbMySQL.properties"));
@@ -73,5 +73,4 @@ public class MySQLDAOFactory extends DAOFactory{
 	public ProductoDAO getProductoDAO(String db) throws SQLException {
 		return new ProductoDAOImpl(db);
 	}
-
 }

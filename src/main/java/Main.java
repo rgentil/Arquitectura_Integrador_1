@@ -71,7 +71,7 @@ public class Main {
 
 		//Imprimir el listado de clientes ordenado por facturación
 		System.out.println("Listado de clientes ordenado por facturación: ");
-		ArrayList<Cliente> clientes = (ArrayList<Cliente>) clienteDAO.getMostBilled();
+		List<Cliente> clientes = clienteDAO.getMostBilled();
 		for(Cliente c: clientes) {
 			System.out.println(c);
 		}

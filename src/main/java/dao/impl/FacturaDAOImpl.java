@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import conection.Conection;
+import connection.Connection;
 import dao.FacturaDAO;
 import entity.Factura;
 
-public class FacturaDAOImpl extends Conection implements FacturaDAO{
+public class FacturaDAOImpl extends Connection implements FacturaDAO{
 
 	private String db;
 	
@@ -23,44 +23,44 @@ public class FacturaDAOImpl extends Conection implements FacturaDAO{
 	@Override
 	public void delete() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "DELETE FROM Factura";
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		}catch (Exception e) {
 			System.out.println("No hace falta el DELETE FROM");
 		}finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}				
 	}
 	
 	@Override
 	public void create() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "CREATE TABLE Factura("
 					+ "idFactura INT,"
 					+ "idCliente INT,"
 					+ "PRIMARY KEY(idFactura),"
 					+ "FOREIGN KEY(idCliente) references cliente(idCliente))";
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		}catch (Exception e) {
 			System.out.println("No hace falta el CREATE TABLE para Factura");
 		}finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}
 	}
 
 	@Override
 	public void insertAll(List<Factura> invoices) throws SQLException{
-		this.getConection(db);
+		this.getConnection(db);
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			for(Factura invoice: invoices) {
 				String insert = "INSERT INTO Factura (idFactura, idCliente) VALUES (?, ?)";
-				st = conection().prepareStatement(insert);
+				st = connection().prepareStatement(insert);
 				st.setLong(1, invoice.getIdFactura());
 				st.setLong(2, invoice.getIdCliente());
 				st.executeUpdate();
@@ -69,7 +69,7 @@ public class FacturaDAOImpl extends Conection implements FacturaDAO{
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			closeConection(st, rs);
+			closeConnection(st, rs);
 		}
 		
 	}
@@ -80,8 +80,8 @@ public class FacturaDAOImpl extends Conection implements FacturaDAO{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConection(db);
-			st = conection().prepareStatement("SELECT * FROM Factura ORDER BY 1");			
+			this.getConnection(db);
+			st = connection().prepareStatement("SELECT * FROM Factura ORDER BY 1");
 			lista = new ArrayList<Factura>();			
 			rs = st.executeQuery();			
 			while (rs.next()) {
@@ -98,7 +98,7 @@ public class FacturaDAOImpl extends Conection implements FacturaDAO{
 		} catch (Exception e) {
 			throw e;
 		} finally {			
-			closeConection(st,rs);	
+			closeConnection(st,rs);
 		}
 	}
 

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import conection.Conection;
+import connection.Connection;
 import dao.ProductoDAO;
 import entity.Producto;
 
-public class ProductoDAOImpl extends Conection implements ProductoDAO {
+public class ProductoDAOImpl extends Connection implements ProductoDAO {
 
 	private String db;
 	
@@ -24,44 +24,44 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 	@Override
 	public void delete() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "DELETE FROM Producto";
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		} catch (Exception e) {
 			System.out.println("No hace falta el DELETE FROM");
 		} finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}				
 	}
 
 	@Override
 	public void create() throws SQLException{
 		try {
-			getConection(db);
+			getConnection(db);
 			String table = "CREATE TABLE Producto("
 					+ "idProducto INT,"
 					+ "nombre VARCHAR(45),"
 					+ "valor FLOAT,"
 					+ "PRIMARY KEY(idProducto))";
-			conection().prepareStatement(table).execute();
+			connection().prepareStatement(table).execute();
 			commit();
 		} catch (Exception e) {
 			System.out.println("No hace falta el CREATE TABLE para Producto");
 		} finally {
-			closeConection(null, null);	
+			closeConnection(null, null);
 		}		
 	}
 
 	@Override
 	public void insertAll(List<Producto> products) throws SQLException{
-		this.getConection(db);
+		this.getConnection(db);
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			for(Producto product: products) {
 				String insert = "INSERT INTO Producto (idProducto, nombre, valor) VALUES (?, ?, ?)";
-				st = conection().prepareStatement(insert);
+				st = connection().prepareStatement(insert);
 				st.setInt(1, product.getIdProducto());
 				st.setString(2, product.getNombre());
 				st.setFloat(3, product.getValor());
@@ -71,7 +71,7 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			closeConection(st, rs);
+			closeConnection(st, rs);
 		}
 	}
 
@@ -81,8 +81,8 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConection(db);
-			st = conection().prepareStatement("SELECT * FROM Producto ORDER BY 1");
+			this.getConnection(db);
+			st = connection().prepareStatement("SELECT * FROM Producto ORDER BY 1");
 			rs = st.executeQuery();			
 			while (rs.next()) {
 				Producto p = new Producto(rs.getInt("idProducto"),rs.getString("nombre"),rs.getFloat("valor"));
@@ -95,7 +95,7 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		} catch (Exception e) {
 			throw e;
 		} finally {			
-			closeConection(st,rs);	
+			closeConnection(st,rs);
 		}
 	}
 
@@ -104,13 +104,13 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConection(db);
+			this.getConnection(db);
 			String query = "SELECT p.idProducto, p.nombre, p.valor, SUM(p.valor * fp.cantidad) as total "
 					+ " FROM Producto p "
 					+ " LEFT JOIN Factura_Producto fp ON (p.idProducto = fp.idProducto) "
 					+ " GROUP BY p.idProducto, p.nombre, p.valor "
 					+ " ORDER BY 4 DESC ";
-			st = conection().prepareStatement(query);
+			st = connection().prepareStatement(query);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				return Optional.of(Producto.builder()
@@ -122,7 +122,7 @@ public class ProductoDAOImpl extends Conection implements ProductoDAO {
 		} catch (Exception e) {
 			throw e;
 		} finally {			
-			closeConection(st,rs);	
+			closeConnection(st,rs);
 		}
 		return Optional.empty();
 	}

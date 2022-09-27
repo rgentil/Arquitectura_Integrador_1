@@ -1,6 +1,5 @@
-package conection;
+package connection;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,30 +7,31 @@ import java.sql.SQLException;
 import factory.DerbyDAOFactory;
 import factory.MySQLDAOFactory;
 import util.Constante;
+
 /**
- * Clase encargada de establecion coneccion con la base de datos
- *
+ * Clase encargada de establecer conexión con la base de datos
  */
-public abstract class Conection {
+public abstract class Connection {
 
-	private Connection conn;
+	private java.sql.Connection connection;
 
-	public Conection() {
+	public Connection() {
 		super();
 	}
 
 	/**
-	 * Crea una conexion con la bd seleccionada
+	 * Crea una conexión con la bd seleccionada
+	 * 
 	 * @param db nombre de la base de datos
 	 * @throws SQLException Error
 	 */
-	public void getConection(String db) throws SQLException {
+	public void getConnection(String db) {
 		switch (db) {
 			case Constante.MYSQL:
-				this.conn = MySQLDAOFactory.createConection();
+				this.connection = MySQLDAOFactory.createConnection();
 				break;
 			case Constante.DERBY:
-				this.conn = DerbyDAOFactory.createConection();
+				this.connection = DerbyDAOFactory.createConnection();
 				break;
 		}
 	}
@@ -42,24 +42,23 @@ public abstract class Conection {
 	 * @param rs ResultSet
 	 * @throws SQLException Error
 	 */
-	public void closeConection(PreparedStatement st, ResultSet rs) throws SQLException {
+	public void closeConnection(PreparedStatement st, ResultSet rs) throws SQLException {
 		if (st != null && !st.isClosed()) {
 			st.close();
 		}
 		if (rs != null && !rs.isClosed()) {
 			rs.close();
 		}
-		if (conn != null && !conn.isClosed()) {
-			conn.close();
+		if (connection != null && !connection.isClosed()) {
+			connection.close();
 		}
 	}
 	
 	public void commit() throws SQLException {
-		conn.commit();
+		connection.commit();
 	}
 	
-	public Connection conection() throws SQLException {
-		return conn;
+	public java.sql.Connection connection() {
+		return connection;
 	}
-
 }
