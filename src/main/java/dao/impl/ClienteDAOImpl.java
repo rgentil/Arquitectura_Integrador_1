@@ -126,7 +126,7 @@ public class ClienteDAOImpl extends Conection implements ClienteDAO{
 					+ " LEFT JOIN Factura f ON (c.idCliente = f.idCliente) "
 					+ " LEFT JOIN Factura_Producto fp ON (f.idFactura = fp.idFactura) "
 					+ " LEFT JOIN Producto p ON (p.idProducto = fp.idProducto) "
-					+ "GROUP BY c.idCliente "
+					+ "GROUP BY c.idCliente, c.nombre, c.email "
 					+ "ORDER BY 4 DESC";
 			st = conection().prepareStatement(query);			
 			;

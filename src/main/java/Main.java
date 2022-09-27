@@ -1,5 +1,3 @@
-package main;
-
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +51,13 @@ public class Main {
 		ClienteDAO clienteDAO = factory.getClienteDAO(db);
 		
 		//Levantar datos de los archivos csv
-		CSVParser productParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("./src/csv/productos.csv"));
+		CSVParser productParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/productos.csv"));
 		List<Producto> products = csvService.parseProducts(productParser);
-		CSVParser clientParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("./src/csv/clientes.csv"));
+		CSVParser clientParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/clientes.csv"));
 		List<Cliente> clients = csvService.parseClients(clientParser);
-		CSVParser invoiceParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("./src/csv/facturas.csv"));
+		CSVParser invoiceParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/facturas.csv"));
 		List<Factura> invoices = csvService.parseInvoices(invoiceParser);
-		CSVParser invoiceProductParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("./src/csv/facturas-productos.csv"));
+		CSVParser invoiceProductParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/facturas-productos.csv"));
 		List<FacturaProducto> invoiceProducts = csvService.parseInvoiceProduct(invoiceProductParser);
 		
 		clienteDAO.insertAll(clients);

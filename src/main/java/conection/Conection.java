@@ -27,13 +27,12 @@ public abstract class Conection {
 	 */
 	public void getConection(String db) throws SQLException {
 		switch (db) {
-		case Constante.MYSQL:
-			this.conn = MySQLDAOFactory.createConection();
-			break;
-	
-		case Constante.DERBY:
-			this.conn = DerbyDAOFactory.createConection();
-			break;
+			case Constante.MYSQL:
+				this.conn = MySQLDAOFactory.createConection();
+				break;
+			case Constante.DERBY:
+				this.conn = DerbyDAOFactory.createConection();
+				break;
 		}
 	}
 
