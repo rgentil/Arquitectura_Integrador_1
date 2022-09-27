@@ -1,9 +1,7 @@
 package factory;
 
 import java.io.FileReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 import dao.ClienteDAO;
@@ -21,18 +19,12 @@ import dao.impl.ProductoDAOImpl;
  */
 public class DerbyDAOFactory extends DAOFactory{
 
-	public DerbyDAOFactory() {
-		DerbyDAOFactory.registerDriver();
-	}
+	private Properties properties = new Properties();
 
-	/**
-	 * Registra el driver de la base de datos.
-	 */
-	private static void registerDriver() {
+	public DerbyDAOFactory() {
 		try {
-			Properties prop = new Properties();
-			prop.load(new FileReader("properties/dbDerby.properties"));
-			String JDBC_DRIVER = prop.getProperty("JDBC_DRIVER");
+			properties.load(new FileReader("properties/dbDerby.properties"));
+			String JDBC_DRIVER = properties.getProperty("JDBC_DRIVER");
 			Class.forName(JDBC_DRIVER).getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			System.out.println(e);
@@ -45,14 +37,12 @@ public class DerbyDAOFactory extends DAOFactory{
 	 * 
 	 * @return Una conexión a la base de datos
 	 */
-	public static Connection createConnection() {
+	@Override
+	public Connection createConnection() {
 		try {
-			Properties prop = new Properties();
-			prop.load(new FileReader("properties/dbDerby.properties"));
-			String DB_URL = prop.getProperty("DB_URL");
-			Connection conn = DriverManager.getConnection(DB_URL);
-			return conn;
-		} catch (Exception e) {
+			String DB_URL = properties.getProperty("DB_URL");
+			return DriverManager.getConnection(DB_URL);
+		} catch (SQLException e) {
 			System.out.println(e);
 		}
 		return null;
@@ -60,21 +50,21 @@ public class DerbyDAOFactory extends DAOFactory{
 
 	@Override
 	public ClienteDAO getClienteDAO(String db) throws SQLException {
-		return new ClienteDAOImpl(db);
+		return new ClienteDAOImpl(this);
 	}
 
 	@Override
 	public FacturaDAO getFacturaDAO(String db) throws SQLException {
-		return new FacturaDAOImpl(db);
+		return new FacturaDAOImpl(this);
 	}
 
 	@Override
 	public FacturaProductoDAO getFacturaProductoDAO(String db) throws SQLException {
-		return new FacturaProductoDAOImpl(db);
+		return new FacturaProductoDAOImpl(this);
 	}
 
 	@Override
 	public ProductoDAO getProductoDAO(String db) throws SQLException {
-		return new ProductoDAOImpl(db);
+		return new ProductoDAOImpl(this);
 	}
 }

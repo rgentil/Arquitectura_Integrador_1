@@ -1,155 +1,127 @@
 package dao.impl;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import connection.Connection;
+import dao.BaseDAO;
 import dao.ClienteDAO;
 import entity.Cliente;
+import factory.DAOFactory;
+
 /**
- * Clase que implementa metodos.
+ * Clase que implementa métodos.
  *
  * @see Connection
  * @see ClienteDAO
  */
-public class ClienteDAOImpl extends Connection implements ClienteDAO{
+public class ClienteDAOImpl extends BaseDAO implements ClienteDAO {
+
+	private static final String DELETE_CLIENTS = "DELETE FROM Cliente";
+	private static final String CREATE_CLIENTS = "CREATE TABLE Cliente("
+			+ "idCliente INT,"
+			+ "nombre VARCHAR(500),"
+			+ "email VARCHAR(150),"
+			+ "PRIMARY KEY(idCliente)"
+			+ ")";
+	private static final String INSERT_CLIENT = "INSERT INTO Cliente (idCliente, nombre, email) VALUES (?, ?, ?)";
+	private static final String SELECT_CLIENTS = "SELECT * FROM Cliente ORDER BY 1";
+	private static final String GET_MOST_BILLED =
+			"SELECT c.idCliente, c.nombre, c.email, SUM(p.valor * fp.cantidad) as total "
+			+ " FROM Cliente c "
+			+ " LEFT JOIN Factura f ON (c.idCliente = f.idCliente) "
+			+ " LEFT JOIN Factura_Producto fp ON (f.idFactura = fp.idFactura) "
+			+ " LEFT JOIN Producto p ON (p.idProducto = fp.idProducto) "
+			+ " GROUP BY c.idCliente, c.nombre, c.email "
+			+ " ORDER BY 4 DESC";
+
+	private DAOFactory factory;
 	
-	private String db;
-	
-	public ClienteDAOImpl(String db) throws SQLException {
-		this.db = db;
+	public ClienteDAOImpl(DAOFactory factory) throws SQLException {
+		this.factory = factory;
 		this.create();
 		this.delete();
 	}
 	
 	@Override
-	public void delete() throws SQLException{
+	public void delete() {
 		try {
-			getConnection(db);
-			String table = "DELETE FROM Cliente";
-			connection().prepareStatement(table).execute();
-			commit();
-		}catch (Exception e) {
-			System.out.println("No hace falta el DELETE FROM");
-		}finally {
-			closeConnection(null, null);
-		}				
+			runStatement(DELETE_CLIENTS, factory);
+		} catch (SQLException e) {
+			System.out.println("Error borrando clientes, statement=" + DELETE_CLIENTS);
+		}
 	}
 	
 	@Override
-	public void create() throws SQLException{
+	public void create() {
 		try {
-			getConnection(db);
-			//String table = "CREATE TABLE IF NOT EXISTS Cliente("
-			String table = "CREATE TABLE Cliente("
-								+ "idCliente INT,"
-								+ "nombre VARCHAR(500),"
-								+ "email VARCHAR(150),"
-								+ "PRIMARY KEY(idCliente)"
-								+ ")";
-			System.out.println("Scrip Cliente " + table);
-			connection().prepareStatement(table).execute();
-			commit();
-		}catch (Exception e) {
-			System.out.println("No hace falta el CREATE TABLE para Cliente");
-		}finally {
-			closeConnection(null, null);
+			runStatement(CREATE_CLIENTS, factory);
+		} catch (SQLException e) {
+			System.out.println("La tabla clientes no fue creada");
 		}
 	}
 
 	@Override
 	public void insertAll(List<Cliente> clients) throws SQLException{
-		this.getConnection(db);
+		Connection connection = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
+			connection = factory.createConnection();
 			for(Cliente client: clients) {
-				String insert = "INSERT INTO Cliente (idCliente, nombre, email) VALUES (?, ?, ?)";
-				st = connection().prepareStatement(insert);
+				st = connection.prepareStatement(INSERT_CLIENT);
 				st.setLong(1, client.getIdCliente());
 				st.setString(2, client.getNombre());
 				st.setString(3, client.getEmail());
 				st.executeUpdate();
-				commit();
-			}			
-		} catch (Exception e) {
-			throw e;
+				connection.commit();
+			}
 		} finally {
-			closeConnection(st, rs);
+			closeConnection(connection, st, rs);
 		}
 	}
 
 	@Override
 	public List<Cliente> getAll() throws Exception {
-		List<Cliente> lista = null;
+		Connection connection = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConnection(db);
-			st = connection().prepareStatement("SELECT * FROM Cliente ORDER BY 1");
-			lista = new ArrayList<>();
-			rs = st.executeQuery();			
-			while (rs.next()) {
-				Cliente c = Cliente.builder()
-						.idCliente(rs.getInt("idCliente"))
-						.nombre(rs.getString("nombre"))
-						.email(rs.getString("email"))
-						.build();
-				lista.add(c);
-			}
-			
-			for(Cliente cliente : lista) {
-				System.out.println(cliente.getIdCliente() + " - " + cliente.getNombre() + " - " + cliente.getEmail());
-			}
-			
-			return lista;
-			
-		} catch (Exception e) {
-			throw e;
-		} finally {			
-			closeConnection(st,rs);
+			connection = factory.createConnection();
+			st = connection.prepareStatement(SELECT_CLIENTS);
+			rs = st.executeQuery();
+			return toList(rs);
+		} finally {
+			closeConnection(connection, st,rs);
 		}
 	}
 	
 	@Override
 	public List<Cliente> getMostBilled() throws Exception {
-		List<Cliente> lista = null;
+		Connection connection = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConnection(db);
-			String query = "SELECT c.idCliente, c.nombre, c.email, SUM(p.valor * fp.cantidad) as total "
-					+ " FROM Cliente c "
-					+ " LEFT JOIN Factura f ON (c.idCliente = f.idCliente) "
-					+ " LEFT JOIN Factura_Producto fp ON (f.idFactura = fp.idFactura) "
-					+ " LEFT JOIN Producto p ON (p.idProducto = fp.idProducto) "
-					+ "GROUP BY c.idCliente, c.nombre, c.email "
-					+ "ORDER BY 4 DESC";
-			st = connection().prepareStatement(query);
-			;
-			lista = new ArrayList<Cliente>();			
+			connection = factory.createConnection();
+			st = connection.prepareStatement(GET_MOST_BILLED);
 			rs = st.executeQuery();			
-			while (rs.next()) {
-				Cliente c = new Cliente(rs.getInt("idCliente"),rs.getString("nombre"),rs.getString("email"));
-				lista.add(c);
-				//System.out.println(rs.getInt(1) + ", " + rs.getString(2) + ", " + rs.getInt(3));
-			}
-			
-			for(Cliente cliente : lista) {
-				System.out.println(cliente.getIdCliente() + " - " + cliente.getNombre() + " - " + cliente.getEmail());
-			}
-			
-			return lista;
-			
-		} catch (Exception e) {
-			throw e;
-		} finally {			
-			closeConnection(st,rs);
+			return toList(rs);
+		} finally {
+			closeConnection(connection, st,rs);
 		}
 	}
-
-	
+	private List<Cliente> toList(ResultSet rs) throws SQLException {
+		List<Cliente> lista = new ArrayList<>();
+		while (rs.next()) {
+			lista.add(Cliente.builder()
+					.idCliente(rs.getInt("idCliente"))
+					.nombre(rs.getString("nombre"))
+					.email(rs.getString("email"))
+					.build());
+		}
+		return lista;
+	}
 }

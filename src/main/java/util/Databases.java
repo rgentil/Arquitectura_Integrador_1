@@ -2,9 +2,8 @@ package util;
 
 /**
  * Clase en donde se van a declarar las constantes de la app
- *
  */
-public class Constante {
+public class Databases {
 	/**
 	 * MySQL
 	 */

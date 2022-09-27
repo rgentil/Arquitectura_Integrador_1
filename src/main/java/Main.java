@@ -1,5 +1,4 @@
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
@@ -15,7 +14,7 @@ import entity.Factura;
 import entity.FacturaProducto;
 import entity.Producto;
 import factory.DAOFactory;
-import util.Constante;
+import util.Databases;
 
 /**
  * Clase principal. Test para validar lo especificado 
@@ -40,7 +39,7 @@ public class Main {
 	public static void main(String[] args) throws Exception{
 		CSVService csvService = new CSVService();
 		//String db = Constante.MYSQL;
-		String db = Constante.DERBY;
+		String db = Databases.DERBY;
 		System.out.println("Se crea una instancia de la base de datos " + db);
 		DAOFactory factory = DAOFactory.getDAOFactory(db);
 		

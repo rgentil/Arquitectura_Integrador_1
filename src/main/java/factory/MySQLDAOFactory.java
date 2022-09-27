@@ -17,18 +17,12 @@ import dao.impl.ProductoDAOImpl;
 
 public class MySQLDAOFactory extends DAOFactory{
 
+	private Properties properties = new Properties();
+
 	public MySQLDAOFactory() {
-		MySQLDAOFactory.registerDriver();
-	}
-	
-	/**
-	 * Metodo que regitra el driver de la base de datos
-	 */
-	private static void registerDriver() {
 		try {
-			Properties prop = new Properties();
-			prop.load(new FileReader("properties/dbMySQL.properties"));
-			String JDBC_DRIVER = prop.getProperty("JDBC_DRIVER");
+			properties.load(new FileReader("properties/dbMySQL.properties"));
+			String JDBC_DRIVER = properties.getProperty("JDBC_DRIVER");
 			Class.forName(JDBC_DRIVER).getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			System.out.println(e);
@@ -41,13 +35,11 @@ public class MySQLDAOFactory extends DAOFactory{
 	 * 
 	 * @return Una conexión a la base de datos.
 	 */
-	public static Connection createConnection() {
+	@Override
+	public Connection createConnection() {
 		try {
-			Properties prop = new Properties();
-			prop.load(new FileReader("properties/dbMySQL.properties"));
-			String DB_URL = prop.getProperty("DB_URL");
-			Connection conn = DriverManager.getConnection(DB_URL);
-			return conn;
+			String DB_URL = properties.getProperty("DB_URL");
+			return DriverManager.getConnection(DB_URL);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -56,21 +48,21 @@ public class MySQLDAOFactory extends DAOFactory{
 	
 	@Override
 	public ClienteDAO getClienteDAO(String db) throws SQLException {
-		return new ClienteDAOImpl(db);
+		return new ClienteDAOImpl(this);
 	}
 
 	@Override
 	public FacturaDAO getFacturaDAO(String db) throws SQLException {
-		return new FacturaDAOImpl(db);
+		return new FacturaDAOImpl(this);
 	}
 
 	@Override
 	public FacturaProductoDAO getFacturaProductoDAO(String db)throws SQLException {
-		return new FacturaProductoDAOImpl(db);
+		return new FacturaProductoDAOImpl(this);
 	}
 
 	@Override
 	public ProductoDAO getProductoDAO(String db) throws SQLException {
-		return new ProductoDAOImpl(db);
+		return new ProductoDAOImpl(this);
 	}
 }

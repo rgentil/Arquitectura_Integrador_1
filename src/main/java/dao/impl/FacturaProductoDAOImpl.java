@@ -1,109 +1,99 @@
 package dao.impl;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import connection.Connection;
+import dao.BaseDAO;
 import dao.FacturaProductoDAO;
 import entity.FacturaProducto;
+import factory.DAOFactory;
 
-public class FacturaProductoDAOImpl extends Connection implements FacturaProductoDAO{
+public class FacturaProductoDAOImpl extends BaseDAO implements FacturaProductoDAO{
 
-	private String db;
+	private static final String DELETE_INVOICE_PRODUCTS = "DELETE FROM Factura_Producto";
+	private static final String CREATE_INVOICE_PRODUCTS = "CREATE TABLE Factura_Producto("
+															+ "idFactura INT,"
+															+ "idProducto INT,"
+															+ "cantidad INT,"
+															+ "PRIMARY KEY(idFactura, idProducto),"
+															+ "FOREIGN KEY(idFactura) references Factura(idFactura),"
+															+ "FOREIGN KEY(idProducto) references Producto(idProducto))";
+	private static final String INSERT_PRODUCTS = "INSERT INTO Factura_Producto (idFactura, idProducto, cantidad) VALUES (?, ?, ?)";
+
+	private DAOFactory factory;
 	
-	public FacturaProductoDAOImpl(String db) throws SQLException {
-		this.db = db;
+	public FacturaProductoDAOImpl(DAOFactory factory) throws SQLException {
+		this.factory = factory;
 		this.create();
 		this.delete();
 	}
 	
 	@Override
-	public void delete() throws SQLException{
+	public void delete() {
 		try {
-			getConnection(db);
-			String table = "DELETE FROM Factura_Producto";
-			connection().prepareStatement(table).execute();
-			commit();
-		}catch (Exception e) {
-			System.out.println("No hace falta el DELETE FROM");
-		}finally {
-			closeConnection(null, null);
-		}				
+			runStatement(DELETE_INVOICE_PRODUCTS, factory);
+		} catch (SQLException e) {
+			System.out.println("Error borrando factura productos, statement=" + DELETE_INVOICE_PRODUCTS);
+		}
 	}
 	
 	@Override
-	public void create() throws SQLException{
+	public void create() {
 		try {
-			getConnection(db);
-			String table = "CREATE TABLE Factura_Producto("
-					+ "idFactura INT,"
-					+ "idProducto INT,"
-					+ "cantidad INT,"
-					+ "PRIMARY KEY(idFactura, idProducto),"
-					+ "FOREIGN KEY(idFactura) references Factura(idFactura),"
-					+ "FOREIGN KEY(idProducto) references Producto(idProducto))";
-			
-			connection().prepareStatement(table).execute();
-			commit();
-		}catch (Exception e) {
-			System.out.println("No hace falta el CREATE TABLE para FacturaProducto");
-		}finally {
-			closeConnection(null, null);
-		}		
+			runStatement(CREATE_INVOICE_PRODUCTS, factory);
+		} catch (SQLException e) {
+			System.out.println("La tabla FacturaProducto no fue creada");
+		}
 	}
 
 	@Override
 	public void insertAll(List<FacturaProducto> invoiceProducts) throws SQLException{
-		this.getConnection(db);
+		Connection connection = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
+			connection = factory.createConnection();
 			for(FacturaProducto invoiceProduct: invoiceProducts) {
-				String insert = "INSERT INTO Factura_Producto (idFactura, idProducto, cantidad) VALUES (?, ?, ?)";
-				st = connection().prepareStatement(insert);
+				st = connection.prepareStatement(INSERT_PRODUCTS);
 				st.setLong(1, invoiceProduct.getIdFactura());
 				st.setLong(2, invoiceProduct.getIdProducto());
 				st.setInt(3, invoiceProduct.getCantidad());
 				st.executeUpdate();
-				commit();
+				connection.commit();
 			}			
-		} catch (Exception e) {
-			throw e;
 		} finally {
-			closeConnection(st, rs);
+			closeConnection(connection, st, rs);
 		}
-		
 	}
 
 	@Override
 	public List<FacturaProducto> getAll() throws Exception {
-		List<FacturaProducto> lista = null;
+		Connection connection = null;
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			this.getConnection(db);
-			st = connection().prepareStatement("SELECT * FROM Factura_Producto ORDER BY 1");
-			lista = new ArrayList<FacturaProducto>();			
-			rs = st.executeQuery();			
-			while (rs.next()) {
-				FacturaProducto fp = new FacturaProducto(rs.getInt("idFactura"),rs.getInt("idProducto"),rs.getInt("cantidad"));
-				lista.add(fp);
-			}
-			
-			for(FacturaProducto facturaProducto : lista) {
-				System.out.println(facturaProducto.getIdFactura() + " - " + facturaProducto.getIdProducto() + " - " + facturaProducto.getCantidad());
-			}
-			
-			return lista;
-			
-		} catch (Exception e) {
-			throw e;
-		} finally {			
-			closeConnection(st,rs);
+			connection = factory.createConnection();
+			st = connection.prepareStatement("SELECT * FROM Factura_Producto ORDER BY 1");
+			rs = st.executeQuery();
+			return toList(rs);
+		} finally {
+			closeConnection(connection, st,rs);
 		}
 	}
 
+	private List<FacturaProducto> toList(ResultSet rs) throws SQLException {
+		List<FacturaProducto> lista = new ArrayList<>();
+		while (rs.next()) {
+			lista.add(FacturaProducto.builder()
+					.idFactura(rs.getInt("idFactura"))
+					.idProducto(rs.getInt("idProducto"))
+					.cantidad(rs.getInt("cantidad"))
+					.build());
+		}
+		return lista;
+	}
 }
