@@ -35,15 +35,15 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// 1) Cree un programa utilizando JDBC que cree el esquema de la base de datos.
 		String db = Databases.DERBY;
-		//String db = Constante.MYSQL;
+		//String db = Databases.MYSQL;
 		System.out.println("Obteniendo la factory para la base de datos " + db);
 		DAOFactory factory = DAOFactory.getDAOFactory(db);
 
 		//Creamos las Tablas
-		FacturaProductoDAO facturaProductoDAO = factory.getFacturaProductoDAO(db);
-		ProductoDAO productoDAO = factory.getProductoDAO(db);
-		FacturaDAO facturaDAO = factory.getFacturaDAO(db);
 		ClienteDAO clienteDAO = factory.getClienteDAO(db);
+		FacturaDAO facturaDAO = factory.getFacturaDAO(db);
+		ProductoDAO productoDAO = factory.getProductoDAO(db);
+		FacturaProductoDAO facturaProductoDAO = factory.getFacturaProductoDAO(db);
 
 		// 2) Considere los CSV dados y escriba un programa JDBC que cargue los datos a la base de
 		// datos. Considere utilizar la biblioteca Apache Commons CSV, disponible en Maven central,

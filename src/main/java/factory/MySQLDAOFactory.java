@@ -39,7 +39,9 @@ public class MySQLDAOFactory extends DAOFactory{
 	public Connection createConnection() {
 		try {
 			String DB_URL = properties.getProperty("DB_URL");
-			return DriverManager.getConnection(DB_URL);
+			var connection = DriverManager.getConnection(DB_URL, properties.getProperty("USER"), properties.getProperty("PASS"));
+			connection.setAutoCommit(Boolean.FALSE);
+			return connection;
 		} catch (Exception e) {
 			System.out.println(e);
 		}

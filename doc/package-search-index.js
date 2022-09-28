@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"conection"},{"l":"dao"},{"l":"entity"},{"l":"factory"},{"l":"impl"},{"l":"main"},{"l":"util"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"csv"},{"l":"dao"},{"l":"dao.impl"},{"l":"entity"},{"l":"factory"},{"l":"util"}];updateSearchResults();

@@ -19,7 +19,7 @@ public class FacturaDAOImpl extends BaseDAO implements FacturaDAO{
 													+ "idFactura INT,"
 													+ "idCliente INT,"
 													+ "PRIMARY KEY(idFactura),"
-													+ "FOREIGN KEY(idCliente) references cliente(idCliente))";
+													+ "FOREIGN KEY(idCliente) references Cliente(idCliente))";
 	private static final String INSERT_FACTURA = "INSERT INTO Factura (idFactura, idCliente) VALUES (?, ?)";
 	private static final String SELECT_FACTURAS = "SELECT * FROM Factura ORDER BY 1";
 

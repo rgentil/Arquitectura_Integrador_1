@@ -29,3 +29,13 @@ _Dependencias_
 
 _Lombok nos permite tener getters, setters, constructores, un constructor para un parámetro, otro para los parámetros obligatorios, etc._
 * [Lombok](https://projectlombok.org/)
+
+## Instrucciones
+
+En la línea 37 de la clase Main se puede elegir la base de datos a usar.
+De elegir mySQL, se deberán completar los datos de conexión en
+/properties/dbMySQL.properties.
+
+[Link al repository en git](https://github.com/rgentil/Arquitectura_Integrador_1)
+
+
