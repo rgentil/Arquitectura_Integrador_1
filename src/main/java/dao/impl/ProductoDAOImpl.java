@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import dao.BaseDAO;
 import dao.ProductoDAO;
-import entity.Cliente;
 import entity.Producto;
 import factory.DAOFactory;
 
@@ -28,7 +27,7 @@ public class ProductoDAOImpl extends BaseDAO implements ProductoDAO {
 														+ " FROM Producto p "
 														+ " LEFT JOIN Factura_Producto fp ON (p.idProducto = fp.idProducto) "
 														+ " GROUP BY p.idProducto, p.nombre, p.valor "
-														+ " ORDER BY 4 DESC ";
+														+ " ORDER BY 4 DESC  ";
 
 	private DAOFactory factory;
 	

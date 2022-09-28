@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BaseDAO {
+public class BaseDAO<T> {
 
     protected void closeConnection(Connection connection,
                                    PreparedStatement st,

@@ -13,7 +13,6 @@ import dao.impl.FacturaDAOImpl;
 import dao.impl.FacturaProductoDAOImpl;
 import dao.impl.ProductoDAOImpl;
 
-
 /**
  * Clase que conecta con la base de datos Derby
  */

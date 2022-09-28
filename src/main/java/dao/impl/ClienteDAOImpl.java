@@ -18,7 +18,7 @@ import factory.DAOFactory;
  * @see Connection
  * @see ClienteDAO
  */
-public class ClienteDAOImpl extends BaseDAO implements ClienteDAO {
+public class ClienteDAOImpl extends BaseDAO<Cliente> implements ClienteDAO {
 
 	private static final String DELETE_CLIENTS = "DELETE FROM Cliente";
 	private static final String CREATE_CLIENTS = "CREATE TABLE Cliente("

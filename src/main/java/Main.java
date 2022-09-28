@@ -1,8 +1,4 @@
-import java.io.FileReader;
 import java.util.List;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 
 import csv.CSVService;
 import dao.ClienteDAO;
@@ -18,7 +14,8 @@ import util.Databases;
 
 /**
  * Clase principal. Test para validar lo especificado 
- * @author 
+ *
+ * @author
  * <ul>
  * 	<li>Guillermina Lauge</li>
  *  <li>Pablo Mendoza</li>
@@ -28,51 +25,50 @@ import util.Databases;
  * @since 2022
  * 
  */
-
 public class Main {
+
+
 	/**
-	 * Clase principal
 	 * @param args Argumentos de la app
-	 * @throws Exception Posible errores
 	 */
 	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws Exception{
-		CSVService csvService = new CSVService();
-		//String db = Constante.MYSQL;
+	public static void main(String[] args) throws Exception {
+		// 1) Cree un programa utilizando JDBC que cree el esquema de la base de datos.
 		String db = Databases.DERBY;
-		System.out.println("Se crea una instancia de la base de datos " + db);
+		//String db = Constante.MYSQL;
+		System.out.println("Obteniendo la factory para la base de datos " + db);
 		DAOFactory factory = DAOFactory.getDAOFactory(db);
-		
-		//Iniciar Tablas para persistir datos.
+
+		//Creamos las Tablas
 		FacturaProductoDAO facturaProductoDAO = factory.getFacturaProductoDAO(db);
 		ProductoDAO productoDAO = factory.getProductoDAO(db);
 		FacturaDAO facturaDAO = factory.getFacturaDAO(db);
 		ClienteDAO clienteDAO = factory.getClienteDAO(db);
-		
-		//Levantar datos de los archivos csv
-		CSVParser productParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/productos.csv"));
-		List<Producto> products = csvService.parseProducts(productParser);
-		CSVParser clientParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/clientes.csv"));
-		List<Cliente> clients = csvService.parseClients(clientParser);
-		CSVParser invoiceParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/facturas.csv"));
-		List<Factura> invoices = csvService.parseInvoices(invoiceParser);
-		CSVParser invoiceProductParser = CSVFormat.DEFAULT.withHeader().parse(new FileReader("src/main/resources/input/facturas-productos.csv"));
-		List<FacturaProducto> invoiceProducts = csvService.parseInvoiceProduct(invoiceProductParser);
-		
+
+		// 2) Considere los CSV dados y escriba un programa JDBC que cargue los datos a la base de
+		// datos. Considere utilizar la biblioteca Apache Commons CSV, disponible en Maven central,
+		// para leer los archivos.
+
+		CSVService csvService = new CSVService();
+		//Levantamos los datos de los archivos csv
+		List<Producto> products = csvService.parseProducts("src/main/resources/input/productos.csv");
+		List<Cliente> clients = csvService.parseClients("src/main/resources/input/clientes.csv");
+		List<Factura> invoices = csvService.parseInvoices("src/main/resources/input/facturas.csv");
+		List<FacturaProducto> invoiceProducts = csvService.parseInvoiceProduct("src/main/resources/input/facturas-productos.csv");
+		// Y los persistimos
 		clienteDAO.insertAll(clients);
 		productoDAO.insertAll(products);
 		facturaDAO.insertAll(invoices);
 		facturaProductoDAO.insertAll(invoiceProducts);
-		
-		//Imprimir el producto que más recaudo
+
+		// 3) Escriba un programa JDBC que retorne el producto que más recaudó. Se define
+		// "recaudación" como cantidad de productos vendidos multiplicada por su valor.
 		System.out.println("Producto más recaudado: ");
 		System.out.println(productoDAO.getHighestGrossed().get() + System.lineSeparator());
 
-		//Imprimir el listado de clientes ordenado por facturación
+		// 4) Escriba un programa JDBC que imprima una lista de clientes, ordenada por a cuál se le
+		// facturó más.
 		System.out.println("Listado de clientes ordenado por facturación: ");
-		List<Cliente> clientes = clienteDAO.getMostBilled();
-		for(Cliente c: clientes) {
-			System.out.println(c);
-		}
+		clienteDAO.getMostBilled().forEach(System.out::println);
 	}
 }
